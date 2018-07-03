@@ -1,0 +1,19 @@
+---
+- name : execute shell inside apache role
+  shell : "echo inside role"
+   
+  notify : 
+    - start shell handler1
+- name : execute shell inside apache role2
+  shell : "echo inside role1"
+   
+  notify : 
+    - start shell handler2
+
+- name : install nginx on ubuntu Server
+  apt : name=nginx update_cache=yes state=latest
+        
+  notify : 
+    - start nginx
+
+

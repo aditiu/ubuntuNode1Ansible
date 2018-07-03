@@ -1,0 +1,14 @@
+---
+- hosts : ubuntuServer
+  become : yes
+  become_user : root
+  remote_user : aditi
+  become_method : sudo
+  gather_facts : false
+  tasks :
+     - setup:
+         filter: ansible_*
+     - debug : var=test_var
+     - debug: var=hostvars[inventory_hostname].ansible_all_ipv4_addresses
+     - debug : msg="{{ hostvars['10.0.2.6'].ansible_local.pref }}"
+       when: ansible_os_family == "Debian"

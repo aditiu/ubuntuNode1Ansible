@@ -1,0 +1,98 @@
+---
+
+- hosts : centosServer
+  remote_user : aditi
+  become_method : sudo
+  gather_facts: yes
+  vars_files :
+     - file.yml
+  vars_prompt:
+     - name: "my_password2"	
+  vars:
+#Simple var
+    hello: HelloWorld
+#Array var
+    hello_Array:
+     - number0
+     - number1
+     - number2
+    hello_Array2: [Asia, Americas, Artic, Antartic ,Oceania,Europe,Africa]
+#This is dictionary exmample:
+#Simple dictionary
+    foo:
+      field1: one
+      field2: two
+    foo2: {field1: "five" ,field2: "i am 5"}
+#list dictionary
+    foo1:
+      - {field: "three" ,name: "i am 3"}
+      - {field: "four" ,name: "i am 4"}
+
+#block for multiple lines
+
+    include_newlines_example: |
+            The new line charaters
+            will appear 
+
+    ignore_newlines_example2: >
+            The new line character will 
+            be removed. Useful when editing 
+            lines
+  tasks :
+     - debug : var=hello
+
+#Array display
+     - debug : msg="This is complete array {{ hello_Array }}"
+     - debug : msg="This is second array var {{ hello_Array[2] }}"
+     - debug : msg="This is complete array one by one {{ item }}"
+       with_items: "{{ hello_Array }}"
+     - debug : msg="This is second array var {{ item }}"
+       with_items: "{{ hello_Array2 }}"
+#dictionary display
+    
+     - debug : var=foo.field1
+     - debug : var=foo2.field1
+     - debug : var=foo2.field2
+   
+     - debug : msg="The value of foo is {{ foo }}"
+     - debug : msg="The value of foo2 is {{ foo2 }}"
+     - debug : msg="The value of foo field1 is {{ foo['field1'] }}"
+     - debug : msg="The value of foo2 field1 is {{ foo2['field1'] }}"
+
+#display list dictionary   
+     - debug : msg="The value of foo1 is {{ foo1 }}"  
+     - debug : msg="good {{ item.field }} and {{ item.name}}"
+       with_items : "{{ foo1 }}"
+       tags : httpd
+
+     - debug : msg="good {{ item.key }} and {{ item.value}}"
+       with_dict : "{{ foo1 }}"
+#propmpt_var
+
+     - debug : msg="The value of prompt is {{ my_password2 }}"
+#file_var
+     - debug : var=test_var
+#register_var
+     - name : execute shell
+       shell : echo "good {{ test_var }}"
+       register : cmd_ops
+
+     - debug : var=cmd_ops.stdout
+     - debug : msg="{{ cmd_ops.stdout }}"
+     - name: Ansible varible multiple line Example
+       debug:
+         msg: "{{ include_newlines_example }}"
+
+     - name: Ansible variables multiline Example
+       debug:
+         msg: "{{ ignore_newlines_example2 }}"
+
+#facts
+
+     - debug : msg="{{ ansible_default_ipv4['address'] }}"
+     - debug : msg="{{ ansible_architecture }}"
+     - debug : msg="{{ ansible_local }}"
+
+     
+
+

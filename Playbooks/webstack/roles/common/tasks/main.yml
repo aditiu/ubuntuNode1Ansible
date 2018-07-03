@@ -1,0 +1,7 @@
+---
+- name : copy file1 to ubuntu Server
+  copy : src=file1.html dest=/home/aditi
+- name : copy file2 to ubuntu Server
+  template : src=index.html dest=/var/www/html/
+
+

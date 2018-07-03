@@ -1,0 +1,9 @@
+---
+- name : start shell handler1
+  shell : "echo aditi" 
+- name : start shell handler2
+  shell : "echo aditi1"
+- name : start nginx
+  service : name=nginx state=started
+
+

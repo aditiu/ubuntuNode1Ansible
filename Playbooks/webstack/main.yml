@@ -1,0 +1,76 @@
+---
+- hosts : all
+  become : yes
+  become_user : root
+  remote_user : aditi
+  become_method : sudo
+  gather_facts : true
+
+- hosts : centosServer
+  become : yes
+  become_user : root
+  remote_user : aditi
+  become_method : sudo
+  vars_files :
+     - var.yml
+  vars_prompt:
+     - name: "my_password2"
+  tasks :
+     - debug : var=test_var
+     - debug: var=hostvars['10.0.2.6'].ansible_all_ipv4_addresses
+     - debug : msg="{{ hostvars['10.0.2.6'].number}}"
+     - debug : msg="{{ ansible_default_ipv4['address'] }}"
+     - name : install nginx on centos
+       yum : pkg=nginx state=latest
+       tags : nginx
+     - name : install httpd on centos
+       yum : pkg={{ item }} state=latest
+       with_items : "{{ values }}"
+       tags : httpd
+     - name : execute shell
+       shell : echo "good {{ test_var }}"
+       register : cmd_ops
+     - debug : var=cmd_ops.stdout
+     - debug : msg="{{ cmd_ops.stdout }}"
+     - name : execute shell
+       shell : ifconfig|grep inet|awk '{print $2}'|head -1
+       register : ip
+       notify : 
+          - execute shell
+
+  handlers :
+     - name : execute shell
+       shell : "echo morning doen"
+
+- hosts : ubuntuServer
+  become : yes
+  become_user : root
+  remote_user : aditi
+  become_method : sudo
+  tasks :
+      - debug : msg="This is inside ubuntu {{ hostvars['10.0.2.4'].ansible_all_ipv4_addresses }}" 
+      - debug : msg="{{ hostvars['10.0.2.4'].cmd_ops.stdout }}"
+      - debug : msg="{{ hostvars['10.0.2.4'] }}"
+      - name : execute echo on ubuntu
+        shell : echo "good morning"
+        notify : 
+          - start shell
+  handlers :
+     - name : start shell
+       shell : "echo good night too"
+         
+  roles :
+      - nginx
+      
+- hosts : ubuntuServer
+  become : yes
+  become_user : root
+  remote_user : aditi
+  become_method : sudo
+  tasks :
+          
+  roles :
+      - common
+      
+      
+
