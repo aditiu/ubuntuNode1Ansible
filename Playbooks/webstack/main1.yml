@@ -11,4 +11,4 @@
      - debug : var=test_var
      - debug: var=hostvars[inventory_hostname].ansible_all_ipv4_addresses
      - debug : msg="{{ hostvars['10.0.2.6'].ansible_local.pref }}"
-       when: ansible_os_family == "{{ os_family }}"
+       when: ansible_os_family == os_family
